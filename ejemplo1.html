@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Ficha Médica</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+
+        form {
+            display: grid;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            background-color: #007BFF;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Formulario de Ficha Médica</h1>
+        <form id="medicalForm">
+            <label for="rut">Rut:</label>
+            <input type="text" id="rut" name="rut" required>
+
+            <label for="nombres">Nombres:</label>
+            <input type="text" id="nombres" name="nombres" required>
+
+            <label for="apellidos">Apellidos:</label>
+            <input type="text" id="apellidos" name="apellidos" required>
+
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" name="direccion" required>
+
+            <label for="ciudad">Ciudad:</label>
+            <input type="text" id="ciudad" name="ciudad" required>
+
+            <label for="telefono">Teléfono:</label>
+            <input type="tel" id="telefono" name="telefono" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+            <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
+
+            <label for="estadoCivil">Estado Civil:</label>
+            <select id="estadoCivil" name="estadoCivil" required>
+                <option value="soltero">Soltero</option>
+                <option value="casado">Casado</option>
+                <option value="divorciado">Divorciado</option>
+                <option value="viudo">Viudo</option>
+            </select>
+
+            <label for="comentarios">Comentarios:</label>
+            <textarea id="comentarios" name="comentarios"></textarea>
+
+            <button type="button" onclick="saveRecord()">Guardar</button>
+            <button type="reset">Limpiar</button>
+            <button type="button" onclick="closeForm()">Cerrar</button>
+        </form>
+
+        <h2>Buscar por Apellido</h2>
+        <input type="text" id="searchApellido" placeholder="Buscar por apellido">
+        <button onclick="searchByApellido()">Buscar</button>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // Simula una base de datos en memoria para los registros
+        let records = [];
+
+        // Guarda un nuevo registro o actualiza uno existente
+        function saveRecord() {
+            const form = document.getElementById('medicalForm');
+            const data = new FormData(form);
+            const record = {};
+
+            data.forEach((value, key) => {
+                record[key] = value;
+            });
+
+            const existingIndex = records.findIndex(r => r.rut === record.rut);
+            if (existingIndex > -1) {
+                if (confirm('El registro ya existe. ¿Desea sobrescribirlo?')) {
+                    records[existingIndex] = record;
+                    alert('Registro actualizado exitosamente.');
+                } else {
+                    alert('El registro no se ha modificado.');
+                }
+            } else {
+                records.push(record);
+                alert('Registro guardado exitosamente.');
+            }
+        }
+
+        // Cierra el formulario (opcional, por ejemplo, para redirigir a otra página)
+        function closeForm() {
+            window.close(); // Solo funcionará en algunas condiciones
+        }
+
+        // Busca registros por apellido
+        function searchByApellido() {
+            const apellido = document.getElementById('searchApellido').value.toLowerCase();
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            const filteredRecords = records.filter(record => record.apellidos.toLowerCase().includes(apellido));
+
+            if (filteredRecords.length > 0) {
+                filteredRecords.forEach(record => {
+                    resultsDiv.innerHTML += `<p>Rut: ${record.rut}, Nombres: ${record.nombres}, Apellidos: ${record.apellidos}, Dirección: ${record.direccion}, Ciudad: ${record.ciudad}, Teléfono: ${record.telefono}, Email: ${record.email}, Fecha de Nacimiento: ${record.fechaNacimiento}, Estado Civil: ${record.estadoCivil}, Comentarios: ${record.comentarios}</p>`;
+                });
+            } else {
+                resultsDiv.innerHTML = '<p>No se encontraron registros.</p>';
+            }
+        }
+    </script>
+</body>
+
+</html>
